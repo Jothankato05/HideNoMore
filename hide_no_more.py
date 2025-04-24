@@ -3,61 +3,71 @@ import os
 from modules import phone_lookup, username_search, metadata_extractor, domain_ip_lookup, geolocation, shodan_search
 
 def banner():
-    print("""
-    ---------------------------------------------------
-    |  Hide No More - OSINT Tool                      |
-    |  v1.0 - Stealthy, Fast, Reliable OSINT Recon    |
-    ---------------------------------------------------
-    """)
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Hide No More - OSINT Recon Tool")
-    subparsers = parser.add_subparsers(dest="command")
-
-    # Phone lookup
-    phone_parser = subparsers.add_parser("phone", help="Lookup information based on phone number")
-    phone_parser.add_argument("number", help="Phone number to search")
-    
-    # Username search
-    user_parser = subparsers.add_parser("username", help="Search for social media profiles based on username")
-    user_parser.add_argument("username", help="Username to search")
-    
-    # Metadata extraction
-    meta_parser = subparsers.add_parser("metadata", help="Extract metadata from files")
-    meta_parser.add_argument("file", help="File path to extract metadata from")
-
-    # Domain/IP lookup
-    domain_parser = subparsers.add_parser("domain", help="Lookup domain or IP information")
-    domain_parser.add_argument("target", help="Domain or IP to look up")
-
-    # Geolocation trace
-    geo_parser = subparsers.add_parser("geo", help="Trace geolocation data")
-    geo_parser.add_argument("target", help="IP address or domain to trace")
-
-    # Shodan search
-    shodan_parser = subparsers.add_parser("shodan", help="Search Shodan for IP/domain intelligence")
-    shodan_parser.add_argument("target", help="IP address or domain to search on Shodan")
-
-    return parser.parse_args()
+    # Colors
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    CYAN = '\033[96m'
+    YELLOW = '\033[93m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    # ASCII Art
+    print(f"""
+{BOLD}{RED} _    _ _     _     _      _   _           _                
+| |  | (_)   | |   | |    | | | |         | |               
+| |__| |_  __| | __| | ___| |_| |__   ___ | |_ ___  ___ ___ 
+|  __  | |/ _` |/ _` |/ _ \ __| '_ \ / _ \| __/ _ \/ __/ __|
+| |  | | | (_| | (_| |  __/ |_| | | | (_) | ||  __/\__ \__ \
+|_|  |_|_|\__,_|\__,_|\___|\__|_| |_|\___/ \__\___||___/___/
+{RESET}""")
+    print(f"{CYAN}{BOLD}By Jothan Prime{RESET}\n")
+    print(f"{YELLOW}{BOLD}Stealthy, Fast, Reliable OSINT Recon Tool{RESET}")
+    print(f"{CYAN}{'-'*60}{RESET}")
 
 def main():
-    args = parse_args()
     banner()
-
-    if args.command == "phone":
-        phone_lookup.lookup(args.number)
-    elif args.command == "username":
-        username_search.search(args.username)
-    elif args.command == "metadata":
-        metadata_extractor.extract(args.file)
-    elif args.command == "domain":
-        domain_ip_lookup.lookup(args.target)
-    elif args.command == "geo":
-        geolocation.trace(args.target)
-    elif args.command == "shodan":
-        shodan_search.search(args.target)
-    else:
-        print("Invalid command. Use --help for usage.")
+    while True:
+        RED = '\033[91m'
+        GREEN = '\033[92m'
+        CYAN = '\033[96m'
+        YELLOW = '\033[93m'
+        RESET = '\033[0m'
+        BOLD = '\033[1m'
+        print(f"""
+{YELLOW}{BOLD}[1]{RESET} {CYAN}Phone Lookup{RESET}         {YELLOW}{BOLD}[2]{RESET} {CYAN}Username Search{RESET}
+{YELLOW}{BOLD}[3]{RESET} {CYAN}Metadata Extraction{RESET}  {YELLOW}{BOLD}[4]{RESET} {CYAN}Domain/IP Lookup{RESET}
+{YELLOW}{BOLD}[5]{RESET} {CYAN}Geolocation Trace{RESET}    {YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search{RESET}
+{YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}                {YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
+""")
+        try:
+            choice = input(f"{GREEN}{BOLD}Select an option: {RESET}").strip()
+        except (KeyboardInterrupt, EOFError):
+            print(f"\n{RED}Exiting. Goodbye!{RESET}")
+            break
+        if choice == "1":
+            number = input(f"{CYAN}Enter phone number: {RESET}").strip()
+            phone_lookup.lookup(number)
+        elif choice == "2":
+            username = input(f"{CYAN}Enter username: {RESET}").strip()
+            username_search.search(username)
+        elif choice == "3":
+            file_path = input(f"{CYAN}Enter file path: {RESET}").strip()
+            metadata_extractor.extract(file_path)
+        elif choice == "4":
+            target = input(f"{CYAN}Enter domain or IP: {RESET}").strip()
+            domain_ip_lookup.lookup(target)
+        elif choice == "5":
+            target = input(f"{CYAN}Enter IP or domain: {RESET}").strip()
+            geolocation.trace(target)
+        elif choice == "6":
+            target = input(f"{CYAN}Enter IP or domain for Shodan: {RESET}").strip()
+            shodan_search.search(target)
+        elif choice == "99":
+            print(f"\n{BOLD}{CYAN}Hide No More - OSINT Tool\nBy Jothan Prime\nStealthy, Fast, Reliable OSINT Recon{RESET}\n")
+        elif choice == "0":
+            print(f"{RED}Exiting. Goodbye!{RESET}")
+            break
+        else:
+            print(f"{RED}Invalid option. Please try again.{RESET}")
 
 if __name__ == "__main__":
     main()
