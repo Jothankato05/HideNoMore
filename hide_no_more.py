@@ -36,7 +36,7 @@ def main():
 {YELLOW}{BOLD}[1]{RESET} {CYAN}Phone Lookup{RESET}         {YELLOW}{BOLD}[2]{RESET} {CYAN}Username Search{RESET}
 {YELLOW}{BOLD}[3]{RESET} {CYAN}Metadata Extraction{RESET}  {YELLOW}{BOLD}[4]{RESET} {CYAN}Domain/IP Lookup{RESET}
 {YELLOW}{BOLD}[5]{RESET} {CYAN}Geolocation Trace{RESET}    {YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search{RESET}
-{YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}                {YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
+{YELLOW}{BOLD}[7]{RESET} {GREEN}Update Tool{RESET}           {YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}                {YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
 """)
         try:
             choice = input(f"{GREEN}{BOLD}Select an option: {RESET}").strip()
@@ -61,6 +61,17 @@ def main():
         elif choice == "6":
             target = input(f"{CYAN}Enter IP or domain for Shodan: {RESET}").strip()
             shodan_search.search(target)
+        elif choice == "7":
+            import subprocess
+            print(f"{YELLOW}Updating Hide No More...{RESET}")
+            try:
+                result = subprocess.run(["git", "pull"], capture_output=True, text=True)
+                print(result.stdout)
+                if result.stderr:
+                    print(f"{RED}{result.stderr}{RESET}")
+                print(f"{GREEN}Update complete! Restart the tool if necessary.{RESET}")
+            except Exception as e:
+                print(f"{RED}Update failed: {e}{RESET}")
         elif choice == "99":
             print(f"\n{BOLD}{CYAN}Hide No More - OSINT Tool\nBy Jothan Prime\nStealthy, Fast, Reliable OSINT Recon{RESET}\n")
         elif choice == "0":
