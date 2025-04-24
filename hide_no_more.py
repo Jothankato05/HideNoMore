@@ -1,6 +1,6 @@
 import argparse
 import os
-from modules import phone_lookup, username_search, metadata_extractor, domain_ip_lookup, geolocation, shodan_search
+from modules import phone_lookup, username_search, metadata_extractor, domain_ip_lookup, geolocation, shodan_search, ip_by_map
 
 def banner():
     # Colors
@@ -48,6 +48,8 @@ def main():
 
 {YELLOW}{BOLD}[7]{RESET} {GREEN}Update Tool{RESET}
 
+{YELLOW}{BOLD}[8]{RESET} {CYAN}IP by Map{RESET}
+
 {YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}
 
 {YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
@@ -86,6 +88,9 @@ def main():
                 print(f"{GREEN}Update complete! Restart the tool if necessary.{RESET}")
             except Exception as e:
                 print(f"{RED}Update failed: {e}{RESET}")
+        elif choice == "8":
+            ip_or_domain = input(f"{CYAN}Enter IP or domain: {RESET}").strip()
+            ip_by_map.map_ip(ip_or_domain)
         elif choice == "99":
             print(f"\n{BOLD}{CYAN}Hide No More - OSINT Tool\nBy Jothan Prime\nStealthy, Fast, Reliable OSINT Recon{RESET}\n")
         elif choice == "0":
