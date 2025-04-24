@@ -12,14 +12,14 @@ def banner():
     BOLD = '\033[1m'
     # ASCII Art
     print(rf"""
-{BOLD}{RED} _    _ _     _     _      _   _           _                {RESET}{CYAN}           /\_/\  
-{BOLD}{RED}| |  | (_)   | |   | |    | | | |         | |               {RESET}{CYAN}          / o o \ 
-{BOLD}{RED}| |__| |_  __| | __| | ___| |_| |__   ___ | |_ ___  ___ ___ {RESET}{CYAN}         (  "  ) |
-{BOLD}{RED}|  __  | |/ _` |/ _` |/ _ \ __| '_ \ / _ \| __/ _ \/ __/ __|{RESET}{CYAN}         \~(*)~/ 
-{BOLD}{RED}| |  | | | (_| | (_| |  __/ |_| | | | (_) | ||  __/\__ \__ \{RESET}{CYAN}          // \\  
-{BOLD}{RED}|_|  |_|_|\__,_|\__,_|\___|\__|_| |_|\___/ \__\___||___/___/{RESET}
-{CYAN}        Husky OSINT{RESET}
-""")
+{BOLD}{RED} _    _ _     _     _      _   _           _                {RESET}{CYAN}      .     
+{BOLD}{RED}| |  | (_)   | |   | |    | | | |         | |               {RESET}{CYAN}     / V\   
+{BOLD}{RED}| |__| |_  __| | __| | ___| |_| |__   ___ | |_ ___  ___ ___ {RESET}{CYAN}    / `  /  
+{BOLD}{RED}|  __  | |/ _` |/ _` |/ _ \ __| '_ \ / _ \| __/ _ \/ __/ __|{RESET}{CYAN}   <<   |   
+{BOLD}{RED}| |  | | | (_| | (_| |  __/ |_| | | | (_) | ||  __/\__ \__ \{RESET}{CYAN}   /    |   
+{BOLD}{RED}|_|  |_|_|\__,_|\__,_|\___|\__|_| |_|\___/ \__\___||___/___/{RESET}{CYAN}  /_    |   
+{CYAN}      `   `
+{RESET}""")
     print(f"{CYAN}{BOLD}By Jothan Prime{RESET}\n")
     print(f"{YELLOW}{BOLD}Stealthy, Fast, Reliable OSINT Recon Tool{RESET}")
     print(f"{CYAN}{'-'*60}{RESET}")
