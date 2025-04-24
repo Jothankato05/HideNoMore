@@ -1,0 +1,7 @@
+requests
+phonenumbers
+beautifulsoup4
+whois
+geopy
+tqdm
+colored
