@@ -34,10 +34,23 @@ def main():
         RESET = '\033[0m'
         BOLD = '\033[1m'
         print(f"""
-{YELLOW}{BOLD}[1]{RESET} {CYAN}Phone Lookup{RESET}         {YELLOW}{BOLD}[2]{RESET} {CYAN}Username Search{RESET}
-{YELLOW}{BOLD}[3]{RESET} {CYAN}Metadata Extraction{RESET}  {YELLOW}{BOLD}[4]{RESET} {CYAN}Domain/IP Lookup{RESET}
-{YELLOW}{BOLD}[5]{RESET} {CYAN}Geolocation Trace{RESET}    {YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search{RESET}
-{YELLOW}{BOLD}[7]{RESET} {GREEN}Update Tool{RESET}           {YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}                {YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
+{YELLOW}{BOLD}[1]{RESET} {CYAN}Phone Lookup{RESET}
+
+{YELLOW}{BOLD}[2]{RESET} {CYAN}Username Search{RESET}
+
+{YELLOW}{BOLD}[3]{RESET} {CYAN}Metadata Extraction{RESET}
+
+{YELLOW}{BOLD}[4]{RESET} {CYAN}Domain/IP Lookup{RESET}
+
+{YELLOW}{BOLD}[5]{RESET} {CYAN}Geolocation Trace{RESET}
+
+{YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search{RESET}
+
+{YELLOW}{BOLD}[7]{RESET} {GREEN}Update Tool{RESET}
+
+{YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}
+
+{YELLOW}{BOLD}[0]{RESET} {RED}Exit{RESET}
 """)
         try:
             choice = input(f"{GREEN}{BOLD}Select an option: {RESET}").strip()
