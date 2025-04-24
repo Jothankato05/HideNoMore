@@ -1,0 +1,5 @@
+site_name: Hide No More OSINT CLI Tool
+repo_url: https://github.com/Jothankato05/HideNoMore
+docs_dir: docs
+nav:
+  - Home: index.md
