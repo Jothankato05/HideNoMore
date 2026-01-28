@@ -382,21 +382,18 @@ class App(ctk.CTk):
                 time.sleep(1)
 
 if __name__ == "__main__":
-    # Create root window (hidden initially)
-    root = ctk.CTk()
-    root.withdraw()
+    # Create main app but keep it hidden
+    app = App()
+    app.withdraw()
     
-    # Show splash screen
-    splash = SplashScreen(root)
+    # Create and show splash screen
+    splash = SplashScreen(app)
     
     def finish_loading():
-        time.sleep(2)  # Show splash for 2 seconds
+        time.sleep(2.5)  # Show splash for 2.5 seconds
         splash.close_splash()
-        root.destroy()
-        
-        # Create and show main app
-        app = App()
-        app.mainloop()
+        app.deiconify()  # Show the main app
     
-    threading.Thread(target=finish_loading, daemon=False).start()
-    root.mainloop()
+    # Schedule the transition
+    app.after(100, lambda: threading.Thread(target=finish_loading, daemon=True).start())
+    app.mainloop()
