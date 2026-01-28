@@ -2,6 +2,8 @@ import customtkinter as ctk
 import sys
 import threading
 import os
+import phonenumbers
+import whois
 from modules import phone_lookup, username_search, metadata_extractor, domain_ip_lookup, geolocation, shodan_search, ip_by_map
 import requests
 import time
