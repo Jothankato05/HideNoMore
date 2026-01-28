@@ -35,7 +35,7 @@ class SplashScreen(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("")
-        self.geometry("600x400")
+        self.geometry("800x500")
         self.resizable(False, False)
         
         # Remove window decorations
@@ -43,66 +43,160 @@ class SplashScreen(ctk.CTkToplevel):
         
         # Center the window
         self.update_idletasks()
-        x = (self.winfo_screenwidth() // 2) - (600 // 2)
-        y = (self.winfo_screenheight() // 2) - (400 // 2)
-        self.geometry(f"600x400+{x}+{y}")
+        x = (self.winfo_screenwidth() // 2) - (400)
+        y = (self.winfo_screenheight() // 2) - (250)
+        self.geometry(f"800x500+{x}+{y}")
         
         # Configure background
         self.configure(fg_color="#000000")
         
-        # Title
-        self.title_label = ctk.CTkLabel(
-            self, 
-            text="HIDE NO MORE",
-            font=ctk.CTkFont(size=32, weight="bold"),
-            text_color="#00ff00"
-        )
-        self.title_label.pack(pady=30)
+        # Main container
+        self.main_frame = ctk.CTkFrame(self, fg_color="#000000")
+        self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
-        # Binary animation canvas
-        self.canvas = ctk.CTkTextbox(
-            self,
-            width=550,
-            height=250,
+        # ASCII Logo
+        self.logo_text = ctk.CTkTextbox(
+            self.main_frame,
+            width=760,
+            height=150,
+            fg_color="#000000",
+            text_color="#00ff00",
+            font=ctk.CTkFont(family="Courier New", size=10, weight="bold")
+        )
+        self.logo_text.pack(pady=(10, 0))
+        self.logo_text.configure(state="disabled")
+        
+        # System messages
+        self.system_text = ctk.CTkTextbox(
+            self.main_frame,
+            width=760,
+            height=180,
             fg_color="#000000",
             text_color="#00ff00",
             font=ctk.CTkFont(family="Consolas", size=12)
         )
-        self.canvas.pack(pady=10)
-        self.canvas.configure(state="disabled")
+        self.system_text.pack(pady=10)
+        self.system_text.configure(state="disabled")
         
-        # Loading text
-        self.loading_label = ctk.CTkLabel(
-            self,
-            text="Initializing...",
-            font=ctk.CTkFont(size=14),
+        # Progress bar
+        self.progress = ctk.CTkProgressBar(self.main_frame, width=760, height=20)
+        self.progress.pack(pady=5)
+        self.progress.set(0)
+        
+        # Status label
+        self.status_label = ctk.CTkLabel(
+            self.main_frame,
+            text="",
+            font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#00ff00"
         )
-        self.loading_label.pack(pady=10)
+        self.status_label.pack(pady=5)
         
+        # Skip instruction
+        self.skip_label = ctk.CTkLabel(
+            self.main_frame,
+            text="Press any key to skip",
+            font=ctk.CTkFont(size=10),
+            text_color="#00ff0080"
+        )
+        self.skip_label.pack(pady=5)
+        
+        # State
         self.animation_running = True
+        self.phase = 0
+        self.skipped = False
+        
+        # Bind key press
+        self.bind("<Key>", self.skip_intro)
+        self.focus_force()
+        
+        # Start animation
         self.start_animation()
         
-    def start_animation(self):
-        def animate():
-            while self.animation_running:
-                # Generate random binary strings
-                lines = []
-                for _ in range(15):
-                    line = ''.join(random.choice('01') for _ in range(70))
-                    lines.append(line)
-                
-                # Update canvas
-                self.canvas.configure(state="normal")
-                self.canvas.delete("1.0", "end")
-                self.canvas.insert("1.0", "\n".join(lines))
-                self.canvas.configure(state="disabled")
-                
-                time.sleep(0.1)
+    def skip_intro(self, event=None):
+        """Skip the intro animation"""
+        self.skipped = True
         
-        threading.Thread(target=animate, daemon=True).start()
+    def write_text(self, widget, text, delay=30):
+        """Typewriter effect"""
+        widget.configure(state="normal")
+        for char in text:
+            if self.skipped:
+                widget.insert("end", text[text.index(char):])
+                break
+            widget.insert("end", char)
+            widget.see("end")
+            widget.update()
+            time.sleep(delay / 1000)
+        widget.configure(state="disabled")
+        
+    def start_animation(self):
+        """Multi-phase cinematic intro"""
+        def run_intro():
+            # Phase 1: ASCII Logo reveal
+            ascii_logo = """
+    ██╗  ██╗██╗██████╗ ███████╗    ███╗   ██╗ ██████╗ 
+    ██║  ██║██║██╔══██╗██╔════╝    ████╗  ██║██╔═══██╗
+    ███████║██║██║  ██║█████╗      ██╔██╗ ██║██║   ██║
+    ██╔══██║██║██║  ██║██╔══╝      ██║╚██╗██║██║   ██║
+    ██║  ██║██║██████╔╝███████╗    ██║ ╚████║╚██████╔╝
+    ╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═══╝ ╚═════╝ 
+                    ███╗   ███╗ ██████╗ ██████╗ ███████╗
+                    ████╗ ████║██╔═══██╗██╔══██╗██╔════╝
+                    ██╔████╔██║██║   ██║██████╔╝█████╗  
+                    ██║╚██╔╝██║██║   ██║██╔══██╗██╔══╝  
+                    ██║ ╚═╝ ██║╚██████╔╝██║  ██║███████╗
+                    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+            """
+            self.logo_text.configure(state="normal")
+            self.logo_text.insert("1.0", ascii_logo)
+            self.logo_text.configure(state="disabled")
+            
+            if self.skipped:
+                self.finish_intro()
+                return
+                
+            time.sleep(0.3)
+            
+            # Phase 2: System boot messages
+            messages = [
+                "[SYSTEM] Initializing OSINT Framework...",
+                "[OK] Loading reconnaissance modules...",
+                "[OK] Phone lookup engine ready",
+                "[OK] Geolocation tracker online", 
+                "[OK] Network scanner initialized",
+                "[OK] Metadata extractor loaded",
+                "[NETWORK] Establishing secure connections...",
+                "[OK] All systems operational",
+                "",
+                "HIDE NO MORE - OSINT Reconnaissance Suite v1.1.0",
+                "By Jothan Prime | Stealthy | Fast | Reliable"
+            ]
+            
+            for i, msg in enumerate(messages):
+                if self.skipped:
+                    break
+                self.write_text(self.system_text, msg + "\n", delay=15)
+                self.progress.set((i + 1) / len(messages))
+                if i < len(messages) - 2:
+                    self.status_label.configure(text=f"Loading... {int((i + 1) / len(messages) * 100)}%")
+                time.sleep(0.1 if i < 8 else 0.3)
+            
+            # Phase 3: Ready
+            if not self.skipped:
+                self.status_label.configure(text="SYSTEM READY", text_color="#00ff00")
+                time.sleep(0.5)
+            
+            self.finish_intro()
+        
+        threading.Thread(target=run_intro, daemon=True).start()
     
+    def finish_intro(self):
+        """Complete the intro sequence"""
+        self.animation_running = False
+        
     def close_splash(self):
+        """Close the splash screen"""
         self.animation_running = False
         self.destroy()
 
@@ -390,7 +484,7 @@ if __name__ == "__main__":
     splash = SplashScreen(app)
     
     def finish_loading():
-        time.sleep(2.5)  # Show splash for 2.5 seconds
+        time.sleep(5)  # Give time for full cinematic intro (can be skipped)
         splash.close_splash()
         app.deiconify()  # Show the main app
     
