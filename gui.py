@@ -28,6 +28,51 @@ class PrintRedirector:
     def flush(self):
         pass
 
+class SettingsDialog(ctk.CTkToplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Settings")
+        self.geometry("400x200")
+        
+        self.label = ctk.CTkLabel(self, text="Shodan API Key:")
+        self.label.pack(pady=10)
+        
+        self.entry = ctk.CTkEntry(self, width=300)
+        self.entry.pack(pady=5)
+        
+        # Load existing key
+        self.config_path = self.get_config_path()
+        if os.path.exists(self.config_path):
+            try:
+                import json
+                with open(self.config_path, 'r') as f:
+                    config = json.load(f)
+                    self.entry.insert(0, config.get('shodan_api_key', ''))
+            except:
+                pass
+
+        self.save_btn = ctk.CTkButton(self, text="Save", command=self.save_config)
+        self.save_btn.pack(pady=20)
+        
+    def get_config_path(self):
+        if getattr(sys, 'frozen', False):
+            base_path = os.path.dirname(sys.executable)
+        else:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, 'config.json')
+
+    def save_config(self):
+        import json
+        key = self.entry.get().strip()
+        config = {'shodan_api_key': key}
+        try:
+            with open(self.config_path, 'w') as f:
+                json.dump(config, f)
+            print(f"Config saved to {self.config_path}")
+            self.destroy()
+        except Exception as e:
+            print(f"Error saving config: {e}")
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -64,9 +109,13 @@ class App(ctk.CTk):
             btn.grid(row=i+1, column=0, padx=20, pady=5, sticky="ew")
             self.sidebar_buttons.append(btn)
 
+
         self.appearance_mode_menu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Dark", "Light", "System"],
                                                       command=self.change_appearance_mode_event)
-        self.appearance_mode_menu.grid(row=9, column=0, padx=20, pady=20, sticky="s")
+        self.appearance_mode_menu.grid(row=9, column=0, padx=20, pady=10, sticky="s")
+        
+        self.settings_btn = ctk.CTkButton(self.sidebar_frame, text="Settings", command=self.open_settings, fg_color="gray", height=24)
+        self.settings_btn.grid(row=10, column=0, padx=20, pady=10, sticky="s")
 
         # Main Content
         self.main_frame = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
@@ -110,6 +159,11 @@ class App(ctk.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
+
+    def open_settings(self):
+        dialog = SettingsDialog(self)
+        dialog.grab_set()
+
 
     def reset_input_ui(self):
         self.entry.delete(0, "end")
