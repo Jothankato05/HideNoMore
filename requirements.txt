@@ -1,0 +1,4 @@
+requests
+phonenumbers
+python-whois
+colorama
