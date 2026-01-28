@@ -7,6 +7,7 @@ import whois
 from modules import phone_lookup, username_search, metadata_extractor, domain_ip_lookup, geolocation, shodan_search, ip_by_map
 import requests
 import time
+import random
 
 # Configuration
 ctk.set_appearance_mode("Dark")
@@ -29,6 +30,81 @@ class PrintRedirector:
 
     def flush(self):
         pass
+
+class SplashScreen(ctk.CTkToplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("")
+        self.geometry("600x400")
+        self.resizable(False, False)
+        
+        # Remove window decorations
+        self.overrideredirect(True)
+        
+        # Center the window
+        self.update_idletasks()
+        x = (self.winfo_screenwidth() // 2) - (600 // 2)
+        y = (self.winfo_screenheight() // 2) - (400 // 2)
+        self.geometry(f"600x400+{x}+{y}")
+        
+        # Configure background
+        self.configure(fg_color="#000000")
+        
+        # Title
+        self.title_label = ctk.CTkLabel(
+            self, 
+            text="HIDE NO MORE",
+            font=ctk.CTkFont(size=32, weight="bold"),
+            text_color="#00ff00"
+        )
+        self.title_label.pack(pady=30)
+        
+        # Binary animation canvas
+        self.canvas = ctk.CTkTextbox(
+            self,
+            width=550,
+            height=250,
+            fg_color="#000000",
+            text_color="#00ff00",
+            font=ctk.CTkFont(family="Consolas", size=12)
+        )
+        self.canvas.pack(pady=10)
+        self.canvas.configure(state="disabled")
+        
+        # Loading text
+        self.loading_label = ctk.CTkLabel(
+            self,
+            text="Initializing...",
+            font=ctk.CTkFont(size=14),
+            text_color="#00ff00"
+        )
+        self.loading_label.pack(pady=10)
+        
+        self.animation_running = True
+        self.start_animation()
+        
+    def start_animation(self):
+        def animate():
+            while self.animation_running:
+                # Generate random binary strings
+                lines = []
+                for _ in range(15):
+                    line = ''.join(random.choice('01') for _ in range(70))
+                    lines.append(line)
+                
+                # Update canvas
+                self.canvas.configure(state="normal")
+                self.canvas.delete("1.0", "end")
+                self.canvas.insert("1.0", "\n".join(lines))
+                self.canvas.configure(state="disabled")
+                
+                time.sleep(0.1)
+        
+        threading.Thread(target=animate, daemon=True).start()
+    
+    def close_splash(self):
+        self.animation_running = False
+        self.destroy()
 
 class SettingsDialog(ctk.CTkToplevel):
     def __init__(self, parent):
@@ -306,5 +382,21 @@ class App(ctk.CTk):
                 time.sleep(1)
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    # Create root window (hidden initially)
+    root = ctk.CTk()
+    root.withdraw()
+    
+    # Show splash screen
+    splash = SplashScreen(root)
+    
+    def finish_loading():
+        time.sleep(2)  # Show splash for 2 seconds
+        splash.close_splash()
+        root.destroy()
+        
+        # Create and show main app
+        app = App()
+        app.mainloop()
+    
+    threading.Thread(target=finish_loading, daemon=False).start()
+    root.mainloop()
