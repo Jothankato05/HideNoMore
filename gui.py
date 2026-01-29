@@ -119,22 +119,34 @@ class SplashScreen(ctk.CTkToplevel):
         
     def write_text(self, widget, text, delay=30):
         """Typewriter effect"""
-        widget.configure(state="normal")
-        for char in text:
-            if self.skipped:
-                widget.insert("end", text[text.index(char):])
-                break
-            widget.insert("end", char)
-            widget.see("end")
-            widget.update()
-            time.sleep(delay / 1000)
-        widget.configure(state="disabled")
+        if not self.animation_running: return
+        try:
+            widget.configure(state="normal")
+            for char in text:
+                if not self.animation_running: break
+                if self.skipped:
+                    widget.insert("end", text[text.index(char):])
+                    break
+                widget.insert("end", char)
+                widget.see("end")
+                # Force update to show changes, but catch error if window destroyed
+                try:
+                    widget.update()
+                except Exception:
+                    break
+                if not self.animation_running: break
+                time.sleep(delay / 1000)
+            if self.animation_running:
+                widget.configure(state="disabled")
+        except Exception:
+            pass
         
     def start_animation(self):
         """Multi-phase cinematic intro"""
         def run_intro():
-            # Phase 1: ASCII Logo reveal
-            ascii_logo = """
+            try:
+                # Phase 1: ASCII Logo reveal
+                ascii_logo = """
     ██╗  ██╗██╗██████╗ ███████╗    ███╗   ██╗ ██████╗ 
     ██║  ██║██║██╔══██╗██╔════╝    ████╗  ██║██╔═══██╗
     ███████║██║██║  ██║█████╗      ██╔██╗ ██║██║   ██║
@@ -147,47 +159,54 @@ class SplashScreen(ctk.CTkToplevel):
                     ██║╚██╔╝██║██║   ██║██╔══██╗██╔══╝  
                     ██║ ╚═╝ ██║╚██████╔╝██║  ██║███████╗
                     ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
-            """
-            self.logo_text.configure(state="normal")
-            self.logo_text.insert("1.0", ascii_logo)
-            self.logo_text.configure(state="disabled")
-            
-            if self.skipped:
-                self.finish_intro()
-                return
+                """
+                if self.animation_running:
+                    self.logo_text.configure(state="normal")
+                    self.logo_text.insert("1.0", ascii_logo)
+                    self.logo_text.configure(state="disabled")
                 
-            time.sleep(0.3)
-            
-            # Phase 2: System boot messages
-            messages = [
-                "[SYSTEM] Initializing OSINT Framework...",
-                "[OK] Loading reconnaissance modules...",
-                "[OK] Phone lookup engine ready",
-                "[OK] Geolocation tracker online", 
-                "[OK] Network scanner initialized",
-                "[OK] Metadata extractor loaded",
-                "[NETWORK] Establishing secure connections...",
-                "[OK] All systems operational",
-                "",
-                "HIDE NO MORE - OSINT Reconnaissance Suite v1.1.0",
-                "By Jothan Prime | Stealthy | Fast | Reliable"
-            ]
-            
-            for i, msg in enumerate(messages):
-                if self.skipped:
-                    break
-                self.write_text(self.system_text, msg + "\n", delay=15)
-                self.progress.set((i + 1) / len(messages))
-                if i < len(messages) - 2:
-                    self.status_label.configure(text=f"Loading... {int((i + 1) / len(messages) * 100)}%")
-                time.sleep(0.1 if i < 8 else 0.3)
-            
-            # Phase 3: Ready
-            if not self.skipped:
-                self.status_label.configure(text="SYSTEM READY", text_color="#00ff00")
-                time.sleep(0.5)
-            
-            self.finish_intro()
+                if self.skipped or not self.animation_running:
+                    self.finish_intro()
+                    return
+                    
+                time.sleep(0.3)
+                
+                # Phase 2: System boot messages
+                messages = [
+                    "[SYSTEM] Initializing OSINT Framework...",
+                    "[OK] Loading reconnaissance modules...",
+                    "[OK] Phone lookup engine ready",
+                    "[OK] Geolocation tracker online", 
+                    "[OK] Network scanner initialized",
+                    "[OK] Metadata extractor loaded",
+                    "[NETWORK] Establishing secure connections...",
+                    "[OK] All systems operational",
+                    "",
+                    "HIDE NO MORE - OSINT Reconnaissance Suite v1.1.0",
+                    "By Jothan Prime | Stealthy | Fast | Reliable"
+                ]
+                
+                for i, msg in enumerate(messages):
+                    if self.skipped or not self.animation_running:
+                        break
+                    self.write_text(self.system_text, msg + "\n", delay=15)
+                    
+                    if not self.animation_running: break
+                    
+                    self.progress.set((i + 1) / len(messages))
+                    if i < len(messages) - 2:
+                        self.status_label.configure(text=f"Loading... {int((i + 1) / len(messages) * 100)}%")
+                    time.sleep(0.1 if i < 8 else 0.3)
+                
+                # Phase 3: Ready
+                if not self.skipped and self.animation_running:
+                    self.status_label.configure(text="SYSTEM READY", text_color="#00ff00")
+                    time.sleep(0.5)
+                
+                self.finish_intro()
+            except Exception as e:
+                # If anything goes wrong, just finish
+                self.finish_intro()
         
         threading.Thread(target=run_intro, daemon=True).start()
     
