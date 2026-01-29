@@ -97,7 +97,7 @@ class SplashScreen(ctk.CTkToplevel):
             self.main_frame,
             text="Press any key to skip",
             font=ctk.CTkFont(size=10),
-            text_color="#00ff0080"
+            text_color="#008000"
         )
         self.skip_label.pack(pady=5)
         
