@@ -12,6 +12,7 @@ from PIL import Image
 from fpdf import FPDF
 import subprocess
 import json
+from tkinter import messagebox
 
 VERSION = "1.2.0"
 REPO_OWNER = "Jothankato05"
@@ -287,10 +288,10 @@ class SettingsDialog(ctk.CTkToplevel):
             if update_data:
                 latest = update_data.get("tag_name")
                 msg = f"New version {latest} available!\nWould you like to download it?"
-                if ctk.filedialog.messagebox.askyesno("Update Available", msg):
+                if messagebox.askyesno("Update Available", msg):
                     UpdateManager.perform_update(update_data.get("html_url"))
             else:
-                ctk.filedialog.messagebox.showinfo("No Updates", "You are using the latest version.")
+                messagebox.showinfo("No Updates", "You are using the latest version.")
             self.after(0, lambda: self.update_btn.configure(state="normal", text="Check for Updates"))
         
         threading.Thread(target=run_check, daemon=True).start()
