@@ -8,6 +8,14 @@ from modules import phone_lookup, username_search, metadata_extractor, domain_ip
 import requests
 import time
 import random
+from PIL import Image
+from fpdf import FPDF
+import subprocess
+import json
+
+VERSION = "1.2.0"
+REPO_OWNER = "Jothankato05"
+REPO_NAME = "HideNoMore"
 
 # Configuration
 ctk.set_appearance_mode("Dark")
@@ -182,7 +190,7 @@ class SplashScreen(ctk.CTkToplevel):
                     "[NETWORK] Establishing secure connections...",
                     "[OK] All systems operational",
                     "",
-                    "HIDE NO MORE - OSINT Reconnaissance Suite v1.1.0",
+                    f"HIDE NO MORE - OSINT Reconnaissance Suite v{VERSION}",
                     "By Jothan Prime | Stealthy | Fast | Reliable"
                 ]
                 
@@ -219,11 +227,32 @@ class SplashScreen(ctk.CTkToplevel):
         self.animation_running = False
         self.destroy()
 
+class UpdateManager:
+    @staticmethod
+    def check_for_updates():
+        try:
+            url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/latest"
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                latest_version = data.get("tag_name", "").replace("v", "")
+                if latest_version > VERSION:
+                    return data
+            return None
+        except:
+            return None
+
+    @staticmethod
+    def perform_update(download_url):
+        # Directed to browser for safety, but can be automated
+        import webbrowser
+        webbrowser.open(download_url)
+
 class SettingsDialog(ctk.CTkToplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title("Settings")
-        self.geometry("400x200")
+        self.geometry("400x300")
         
         self.label = ctk.CTkLabel(self, text="Shodan API Key:")
         self.label.pack(pady=10)
@@ -242,9 +271,30 @@ class SettingsDialog(ctk.CTkToplevel):
             except:
                 pass
 
-        self.save_btn = ctk.CTkButton(self, text="Save", command=self.save_config)
-        self.save_btn.pack(pady=20)
+        self.save_btn = ctk.CTkButton(self, text="Save Settings", command=self.save_config)
+        self.save_btn.pack(pady=10)
+
+        self.version_label = ctk.CTkLabel(self, text=f"Current Version: v{VERSION}", font=ctk.CTkFont(size=12, slant="italic"))
+        self.version_label.pack(pady=5)
+
+        self.update_btn = ctk.CTkButton(self, text="Check for Updates", command=self.check_update, fg_color="#1f538d")
+        self.update_btn.pack(pady=10)
         
+    def check_update(self):
+        self.update_btn.configure(state="disabled", text="Checking...")
+        def run_check():
+            update_data = UpdateManager.check_for_updates()
+            if update_data:
+                latest = update_data.get("tag_name")
+                msg = f"New version {latest} available!\nWould you like to download it?"
+                if ctk.filedialog.messagebox.askyesno("Update Available", msg):
+                    UpdateManager.perform_update(update_data.get("html_url"))
+            else:
+                ctk.filedialog.messagebox.showinfo("No Updates", "You are using the latest version.")
+            self.after(0, lambda: self.update_btn.configure(state="normal", text="Check for Updates"))
+        
+        threading.Thread(target=run_check, daemon=True).start()
+
     def get_config_path(self):
         if getattr(sys, 'frozen', False):
             base_path = os.path.dirname(sys.executable)
@@ -307,6 +357,9 @@ class App(ctk.CTk):
         
         self.settings_btn = ctk.CTkButton(self.sidebar_frame, text="Settings", command=self.open_settings, fg_color="gray", height=24)
         self.settings_btn.grid(row=10, column=0, padx=20, pady=10, sticky="s")
+        
+        self.save_btn = ctk.CTkButton(self.sidebar_frame, text="Save Report", command=self.save_report, fg_color="#2c3e50", height=24)
+        self.save_btn.grid(row=11, column=0, padx=20, pady=10, sticky="s")
 
         # Main Content
         self.main_frame = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
@@ -354,6 +407,27 @@ class App(ctk.CTk):
     def open_settings(self):
         dialog = SettingsDialog(self)
         dialog.grab_set()
+
+    def save_report(self):
+        content = self.console.get("1.0", "end-1c").strip()
+        if not content:
+            print("[!] Console is empty. Nothing to save.")
+            return
+            
+        file_path = ctk.filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
+            title="Save OSINT Report"
+        )
+        
+        if file_path:
+            try:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(f"--- HIDE NO MORE OSINT REPORT ---\nGenerated: {time.ctime()}\n\n")
+                    f.write(content)
+                print(f"[+] Report saved to: {file_path}")
+            except Exception as e:
+                print(f"[!] Failed to save report: {e}")
 
 
     def reset_input_ui(self):

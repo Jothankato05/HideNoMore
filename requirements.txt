@@ -2,3 +2,6 @@ requests
 phonenumbers
 python-whois
 colorama
+Pillow
+folium
+fpdf2
