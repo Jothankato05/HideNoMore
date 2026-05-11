@@ -14,7 +14,7 @@ import subprocess
 import json
 from tkinter import messagebox, filedialog
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 REPO_OWNER = "Jothankato05"
 REPO_NAME = "HideNoMore"
 
