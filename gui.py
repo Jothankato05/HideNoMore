@@ -12,7 +12,7 @@ from PIL import Image
 from fpdf import FPDF
 import subprocess
 import json
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 VERSION = "1.2.0"
 REPO_OWNER = "Jothankato05"
@@ -415,7 +415,7 @@ class App(ctk.CTk):
             print("[!] Console is empty. Nothing to save.")
             return
             
-        file_path = ctk.filedialog.asksaveasfilename(
+        file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
             title="Save OSINT Report"
@@ -435,6 +435,7 @@ class App(ctk.CTk):
         self.entry.delete(0, "end")
         self.file_button.grid_forget()
         self.entry.configure(state="normal")
+        self.action_button.configure(text="Run", state="normal")
         self.tracking_active = False
 
     def highlight_button(self, name):
@@ -485,7 +486,7 @@ class App(ctk.CTk):
         self.header_label.configure(text="Live Tracking (Enter IP)")
         self.reset_input_ui()
         self.current_tool = "live"
-        self.action_button.configure(text="Start")
+        self.action_button.configure(text="Start", state="normal")
         self.highlight_button("Live Tracking")
 
     def show_map(self):
@@ -495,12 +496,16 @@ class App(ctk.CTk):
         self.highlight_button("IP Map")
 
     def browse_file(self):
-        file_path = ctk.filedialog.askopenfilename()
+        file_path = filedialog.askopenfilename()
         if file_path:
             self.entry.delete(0, "end")
             self.entry.insert(0, file_path)
 
     def run_task(self):
+        if not self.current_tool:
+            print("Please select a tool first.")
+            return
+
         target = self.entry.get().strip()
         if not target and self.current_tool != "live": # Live might stop with empty
             print("Please enter a target.")

@@ -5,3 +5,4 @@ colorama
 Pillow
 folium
 fpdf2
+customtkinter
