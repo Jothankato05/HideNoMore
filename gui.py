@@ -14,7 +14,7 @@ import subprocess
 import json
 from tkinter import messagebox, filedialog
 
-VERSION = "1.2.1"
+VERSION = "1.2.2"
 REPO_OWNER = "Jothankato05"
 REPO_NAME = "HideNoMore"
 
@@ -341,9 +341,9 @@ class App(ctk.CTk):
             ("Metadata Extraction", self.show_metadata),
             ("Domain/IP Lookup", self.show_domain),
             ("Geolocation Trace", self.show_geo),
-            ("Shodan Search", self.show_shodan),
-            ("Live Tracking", self.show_live),
-            ("IP Map", self.show_map)
+            ("Shodan Search (Coming Soon)", lambda: self.show_coming_soon("Shodan Search (Coming Soon)")),
+            ("Live Tracking (Coming Soon)", lambda: self.show_coming_soon("Live Tracking (Coming Soon)")),
+            ("IP Map (Coming Soon)", lambda: self.show_coming_soon("IP Map (Coming Soon)"))
         ]
 
         for i, (name, command) in enumerate(tools):
@@ -444,6 +444,15 @@ class App(ctk.CTk):
                 btn.configure(fg_color=("gray75", "gray25"))
             else:
                 btn.configure(fg_color="transparent")
+
+    def show_coming_soon(self, name):
+        self.header_label.configure(text=f"{name}")
+        self.reset_input_ui()
+        self.current_tool = None
+        self.entry.configure(state="disabled", placeholder_text="This tool is currently locked...")
+        self.action_button.configure(state="disabled")
+        self.highlight_button(name)
+        print(f"[!] {name} is coming soon or requires an API key that hasn't been added yet.")
 
     def show_phone(self):
         self.header_label.configure(text="Phone Lookup")

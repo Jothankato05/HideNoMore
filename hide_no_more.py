@@ -46,13 +46,13 @@ def main():
 
 {YELLOW}{BOLD}[5]{RESET} {CYAN}Geolocation Trace{RESET}
 
-{YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search{RESET}
+{YELLOW}{BOLD}[6]{RESET} {CYAN}Shodan Search (Coming Soon){RESET}
 
 {YELLOW}{BOLD}[7]{RESET} {GREEN}Update Tool{RESET}
 
-{YELLOW}{BOLD}[8]{RESET} {CYAN}IP by Map{RESET}
+{YELLOW}{BOLD}[8]{RESET} {CYAN}IP by Map (Coming Soon){RESET}
 
-{YELLOW}{BOLD}[9]{RESET} {CYAN}Live Tracking{RESET}
+{YELLOW}{BOLD}[9]{RESET} {CYAN}Live Tracking (Coming Soon){RESET}
 
 {YELLOW}{BOLD}[99]{RESET} {RED}About{RESET}
 
@@ -84,8 +84,7 @@ def main():
             geolocation.trace(target)
             input(f"\n{YELLOW}Press Enter to return to menu...{RESET}")
         elif choice == "6":
-            target = input(f"{CYAN}Enter IP or domain for Shodan: {RESET}").strip()
-            shodan_search.search(target)
+            print(f"{YELLOW}[!] Shodan Search is coming soon or requires an API key that hasn't been added yet.{RESET}")
             input(f"\n{YELLOW}Press Enter to return to menu...{RESET}")
         elif choice == "7":
             import subprocess
@@ -100,17 +99,10 @@ def main():
                 print(f"{RED}Update failed: {e}{RESET}")
             input(f"\n{YELLOW}Press Enter to return to menu...{RESET}")
         elif choice == "8":
-            ip_or_domain = input(f"{CYAN}Enter IP or domain: {RESET}").strip()
-            ip_by_map.map_ip(ip_or_domain)
+            print(f"{YELLOW}[!] IP by Map is coming soon.{RESET}")
             input(f"\n{YELLOW}Press Enter to return to menu...{RESET}")
         elif choice == "9":
-            ip_or_domain = input(f"{CYAN}Enter IP or domain: {RESET}").strip()
-            interval = input(f"{CYAN}Enter update interval in seconds (default 10): {RESET}").strip()
-            try:
-                interval = int(interval) if interval else 10
-            except ValueError:
-                interval = 10
-            live_tracking.live_track(ip_or_domain, interval)
+            print(f"{YELLOW}[!] Live Tracking is coming soon.{RESET}")
             input(f"\n{YELLOW}Press Enter to return to menu...{RESET}")
         elif choice == "99":
             print(f"\n{BOLD}{CYAN}Hide No More - OSINT Tool\nBy Jothan Prime\nStealthy, Fast, Reliable OSINT Recon{RESET}\n")
